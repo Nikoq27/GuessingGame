@@ -25,34 +25,34 @@ let highestNumber: Int = 100
 // The game itself: what it remembers, what it shows on the screen,
 // and what it does when you click a button.
 struct GuessingGameView: View {
-
+    
     // MARK: - Stored properties
-
+    
     // Each @State variable is something the game remembers.
     // When one of them changes, the screen updates by itself.
-
+    
     // The number the player is trying to find. The app picks it at random.
     @State var secretNumber: Int = Int.random(in: lowestNumber...highestNumber)
-
+    
     // The guess the player is about to make. It starts in the middle.
     @State var guess: Int = (lowestNumber + highestNumber) / 2
-
+    
     // How many guesses the player has made in this game.
     @State var guessCount: Int = 0
-
+    
     // The message shown to the player, with a symbol and a colour to match it.
     @State var message: String = "I'm thinking of a number from \(lowestNumber) to \(highestNumber)."
     @State var messageSymbol: String = "questionmark.circle.fill"
     @State var messageColor: Color = Color.indigo
-
+    
     // Becomes true when the player finds the secret number.
     @State var gameIsOver: Bool = false
-
+    
     // MARK: - Computed properties
-
+    
     var body: some View {
         VStack(spacing: 20) {
-
+            
             // The title at the top of the screen.
             HStack {
                 Image(systemName: "sparkle.magnifyingglass")
@@ -64,9 +64,9 @@ struct GuessingGameView: View {
             // Shrink the title a little if it does not fit on one line.
             .lineLimit(1)
             .minimumScaleFactor(0.5)
-
+            
             Spacer()
-
+            
             // The message card: what the game has to say to you.
             VStack(spacing: 12) {
                 Image(systemName: messageSymbol)
@@ -80,15 +80,15 @@ struct GuessingGameView: View {
             .frame(maxWidth: .infinity, minHeight: 180)
             .background(messageColor.opacity(0.15))
             .clipShape(RoundedRectangle(cornerRadius: 24))
-
+            
             Spacer()
-
+            
             // The guess you are about to make, shown nice and big.
             // TRY: Change the size of this number from 96 to something else.
             Text("\(guess)")
                 .font(.system(size: 96, weight: .bold))
                 .monospacedDigit()
-
+            
             // Four buttons to change the guess.
             // The code inside the braces runs when that button is clicked.
             HStack(spacing: 8) {
@@ -101,7 +101,7 @@ struct GuessingGameView: View {
                 Button("-1") {
                     lowerGuessByOne()
                 }
-               
+                
                 Button("+1") {
                     raiseGuessByOne()
                 }
@@ -121,7 +121,7 @@ struct GuessingGameView: View {
             .bold()
             .monospacedDigit()
             .disabled(gameIsOver)
-
+            
             // Show the Guess button while the game is on,
             // and the Play Again button once the number is found.
             if gameIsOver {
@@ -136,7 +136,7 @@ struct GuessingGameView: View {
                 }
                 .buttonStyle(.borderedProminent)
             }
-
+            
             Text("Guesses so far: \(guessCount)")
                 .font(.headline)
                 .foregroundStyle(Color.secondary)
@@ -150,34 +150,30 @@ struct GuessingGameView: View {
         // How big the game's window is on the Mac. It can be made taller or wider.
         .frame(minWidth: 420, minHeight: 640)
     }
-
+    
     // MARK: - Functions
-
+    
     // Checks the player's guess against the secret number.
     func checkGuess() {
-
+        
         // One more guess has been made.
         guessCount += 1
-
+        
         
         if guess == secretNumber {
             message = "Yes! \(secretNumber) is my number."
             messageSymbol = "star.circle.fill"
             messageColor = Color.green
             gameIsOver = true
+        } else if guess < secretNumber {
+            
+            message = "The secret number is more than \(guess)"
+            messageSymbol = "arrow.up.circle.fill"
         } else {
-            // TRY: Change this message. Make it kinder, or sillier.
-            message = "\(guess) is not my number. Try again."
-            if guess < secretNumber {
-                
-                message = "The secret number is more than \(guess)"
-            } else {
-                
-                message = "The secret number is less than \(guess)"
-            }
-            messageSymbol = "xmark.circle.fill"
-            messageColor = Color.orange
+            message = "The secret number is less than \(guess)"
+            messageSymbol = "arrow.down.circle.fill"
         }
+        
     }
     
 
@@ -234,7 +230,7 @@ struct GuessingGameView: View {
         guess = (lowestNumber + highestNumber) / 2
         guessCount = 0
         message = "I'm thinking of a new number from \(lowestNumber) to \(highestNumber)."
-        messageSymbol = "questionmark.circle.fill"
+        messageSymbol = "arcade.stick"
         messageColor = Color.indigo
         gameIsOver = false
     }
