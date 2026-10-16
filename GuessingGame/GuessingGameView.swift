@@ -21,13 +21,15 @@ import SwiftUI
 // TRY: Change highestNumber to 10 for an easy game, or to 1000 for a hard one.
 let lowestNumber: Int = 1
 let highestNumber: Int = 100
-
+// What the game calls the player.
+let playerName: String = "Niko"
 // The game itself: what it remembers, what it shows on the screen,
 // and what it does when you click a button.
 struct GuessingGameView: View {
     
     // MARK: - Stored properties
-    
+    // How many games the player has won since the app started.
+    @State var gamesWon: Int = 0
     // Each @State variable is something the game remembers.
     // When one of them changes, the screen updates by itself.
     
@@ -38,7 +40,7 @@ struct GuessingGameView: View {
     @State var guess: Int = (lowestNumber + highestNumber) / 2
     
     // How many guesses the player has made in this game.
-    @State var guessCount: Int = 0
+    @State var guessCount: Int = 7
     
     // The message shown to the player, with a symbol and a colour to match it.
     @State var message: String = "I'm thinking of a number from \(lowestNumber) to \(highestNumber)."
@@ -137,7 +139,7 @@ struct GuessingGameView: View {
                 .buttonStyle(.borderedProminent)
             }
             
-            Text("Guesses so far: \(guessCount)")
+            Text("Guesses left: \(guessCount)    Games won: \(gamesWon)")
                 .font(.headline)
                 .foregroundStyle(Color.secondary)
         }
@@ -157,21 +159,27 @@ struct GuessingGameView: View {
     func checkGuess() {
         
         // One more guess has been made.
-        guessCount += 1
+        guessCount -= 1
         
-        
-        if guess == secretNumber {
-            message = "Yes! \(secretNumber) is my number."
+        if  guess == secretNumber {
+            message = "Yes, \(playerName)! \(secretNumber) is my number."
             messageSymbol = "star.circle.fill"
             messageColor = Color.green
             gameIsOver = true
-        } else if guess < secretNumber {
+            gamesWon += 1
+        } else if guessCount <= 0 {
+            message = "No, \(playerName)! You lost!!!"
+            messageSymbol = "xmark"
+            messageColor = Color.red
+            gameIsOver = true
+    
+        } else if guess > secretNumber{
+            message = "The secret number is less than \(guess)"
+            messageSymbol = "arrow.down.circle.fill"
+        }else if guess < secretNumber {
             
             message = "The secret number is more than \(guess)"
             messageSymbol = "arrow.up.circle.fill"
-        } else {
-            message = "The secret number is less than \(guess)"
-            messageSymbol = "arrow.down.circle.fill"
         }
         
     }
@@ -228,7 +236,7 @@ struct GuessingGameView: View {
     func startNewGame() {
         secretNumber = Int.random(in: lowestNumber...highestNumber)
         guess = (lowestNumber + highestNumber) / 2
-        guessCount = 0
+        guessCount = 7
         message = "I'm thinking of a new number from \(lowestNumber) to \(highestNumber)."
         messageSymbol = "arcade.stick"
         messageColor = Color.indigo
